@@ -1,89 +1,72 @@
 <template>
   <div class="task-list">
     <h2>Task List</h2>
-    <div v-if="sortedTasks.length === 0" class="empty-state">
+    <EmptyState v-if="sortedTasks.length === 0">
       No tasks available. Add a new task to get started!
-    </div>
+    </EmptyState>
     <ul v-else>
-      <li v-for="task in sortedTasks" :key="task.id" class="task-item">
-        <h3>{{ task.title }}</h3>
-        <p>{{ task.description }}</p>
-        <p>Due: {{ formattedDate(task.dueDate) }}</p>
-        <p :class="['status', task.status.toLowerCase()]">
-          Status: {{ task.status }}
-        </p>
-      </li>
+      <TaskItem v-for="task in sortedTasks" :key="task.id" :task="task" />
     </ul>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, onMounted } from "vue";
 import { useTaskStore } from "../stores/taskStore";
+import TaskItem from "./TaskItem.vue";
+import EmptyState from "./general/EmptyState.vue";
 import { Task, TaskStatus } from "../types/task";
 
 export default defineComponent({
   name: "TaskList",
+  components: {
+    TaskItem,
+    EmptyState,
+  },
   setup() {
     const taskStore = useTaskStore();
-    taskStore.addTask({
-      id: 1,
-      title: "Task 1 title",
-      description: "Task 1 Description: Lorem ipsum dolor amet",
-      dueDate: "2024-10-05",
-      status: TaskStatus.Completed,
-    });
-    taskStore.addTask({
-      id: 2,
-      title: "Task 2 title",
-      description: "Task 2 Description: Lorem ipsum dolor amet",
-      dueDate: "2024-10-05",
-      status: TaskStatus.InProgress,
-    });
-    taskStore.addTask({
-      id: 3,
-      title: "Task 3 title",
-      description: "Task 3 Description: Lorem ipsum dolor amet",
-      dueDate: "2024-10-05",
-      status: TaskStatus.Pending,
+
+    onMounted(() => {
+      if (taskStore.tasks.length === 0) {
+        taskStore.addTask({
+          id: 1,
+          title: "Task 1 title",
+          description: "Task 1 Description: Lorem ipsum dolor amet",
+          dueDate: "2024-10-05",
+          status: TaskStatus.Completed,
+        });
+        taskStore.addTask({
+          id: 2,
+          title: "Task 2 title",
+          description: "Task 2 Description: Lorem ipsum dolor amet",
+          dueDate: "2024-10-05",
+          status: TaskStatus.InProgress,
+        });
+        taskStore.addTask({
+          id: 3,
+          title: "Task 3 title",
+          description: "Task 3 Description: Lorem ipsum dolor amet",
+          dueDate: "2024-10-05",
+          status: TaskStatus.Pending,
+        });
+      }
     });
 
     const sortedTasks = computed(() => {
       return taskStore.tasks.slice().sort((a: Task, b: Task) => {
-        const dateA = new Date(a.dueDate).getTime();
-        const dateB = new Date(b.dueDate).getTime();
-        return dateA - dateB;
+        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
       });
     });
 
-    const formattedDate = (dateStr: string): string => {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) {
-        return "Invalid date";
-      }
-      return date.toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
-    };
-
     return {
       sortedTasks,
-      formattedDate,
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
-$background-color: #f9f9f9;
-$border-color: #ddd;
-$text-color: #888;
-$hover-bg-color: #f1f1f1;
-$pending-color: orange;
-$completed-color: green;
-$overdue-color: red;
+@import "../styles/variables.scss";
 
 .task-list {
   padding: 20px;
@@ -93,7 +76,7 @@ $overdue-color: red;
   h2 {
     margin-bottom: 15px;
     font-size: 1.5rem;
-    color: #2c3e50;
+    color: $text-color;
   }
 
   .empty-state {
@@ -123,12 +106,12 @@ $overdue-color: red;
       h3 {
         margin: 0 0 5px 0;
         font-size: 1.2rem;
-        color: #34495e;
+        color: $text-color;
       }
 
       p {
         margin: 5px 0;
-        color: #2c3e50;
+        color: $text-color;
 
         &.status {
           font-weight: bold;
