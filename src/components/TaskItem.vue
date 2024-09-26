@@ -33,15 +33,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "../styles/variables.scss";
-@import "../styles/mixins.scss";
 .task-item {
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $purple;
   padding: 10px 0;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: $hover-bg-color;
+    background-color: $background-color;
   }
 
   &:last-child {
@@ -51,16 +49,17 @@ export default defineComponent({
   h3 {
     margin: 0 0 5px 0;
     font-size: 1.2rem;
-    color: $text-color;
+    font-family: $medium;
+    color: $purple;
   }
 
   p {
     margin: 5px 0;
-    color: $text-color;
+    color: $purple;
   }
 
   p.status {
-    font-weight: bold;
+    font-family: $medium;
     text-transform: capitalize;
 
     &.pending {

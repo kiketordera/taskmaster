@@ -49,6 +49,13 @@ export default defineComponent({
           dueDate: "2024-10-05",
           status: TaskStatus.Pending,
         });
+        taskStore.addTask({
+          id: 3,
+          title: "Task 4 title",
+          description: "Task 4 Description: Lorem ipsum dolor amet",
+          dueDate: "2024-10-05",
+          status: TaskStatus.Overdue,
+        });
       }
     });
 
@@ -66,8 +73,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "../styles/variables.scss";
-
 .task-list {
   padding: 20px;
   background-color: $background-color;
@@ -76,61 +81,20 @@ export default defineComponent({
   h2 {
     margin-bottom: 15px;
     font-size: 1.5rem;
-    color: $text-color;
+    font-family: $medium;
+    color: $purple;
   }
 
   .empty-state {
     text-align: center;
-    color: $text-color;
-    font-style: italic;
+    color: $purple;
+    font-family: $regular;
     padding: 20px 0;
   }
 
   ul {
     list-style-type: none;
     padding: 0;
-
-    .task-item {
-      border-bottom: 1px solid $border-color;
-      padding: 10px 0;
-      transition: background-color 0.3s;
-
-      &:hover {
-        background-color: $hover-bg-color;
-      }
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      h3 {
-        margin: 0 0 5px 0;
-        font-size: 1.2rem;
-        color: $text-color;
-      }
-
-      p {
-        margin: 5px 0;
-        color: $text-color;
-
-        &.status {
-          font-weight: bold;
-          text-transform: capitalize;
-
-          &.pending {
-            color: $pending-color;
-          }
-
-          &.completed {
-            color: $completed-color;
-          }
-
-          &.overdue {
-            color: $overdue-color;
-          }
-        }
-      }
-    }
   }
 }
 </style>

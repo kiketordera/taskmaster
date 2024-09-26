@@ -1,11 +1,11 @@
 @mixin status-color($status) {
     @if $status == 'pending' {
-      color: $pending-color;
+      color: $orange;
     } @else if $status == 'completed' {
-      color: $completed-color;
+      color: $green;
     } @else if $status == 'overdue' {
-      color: $overdue-color;
+      color: $pink;
     } @else {
-      color: $text-color;
+      color: $purple;
     }
   }

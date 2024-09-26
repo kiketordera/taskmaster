@@ -12,13 +12,11 @@
   });
   </script>
   
-  <style lang="scss" scoped>
-  @import "../../styles/variables.scss";
-  
+  <style lang="scss" scoped>  
   .empty-state {
     text-align: center;
-    color: $text-color;
-    font-style: italic;
+    color: $pink;
+    font-family: $regular;
     padding: 20px 0;
   }
   </style>
