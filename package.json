@@ -11,6 +11,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "pinia": "^2.2.2",
     "vue": "^3.4.37"
   },
   "devDependencies": {
@@ -24,6 +25,7 @@
     "@storybook/vue3": "^8.3.3",
     "@storybook/vue3-vite": "^8.3.3",
     "@vitejs/plugin-vue": "^5.1.2",
+    "sass-embedded": "^1.79.3",
     "storybook": "^8.3.3",
     "ts-loader": "^9.5.1",
     "typescript": "^5.6.2",
