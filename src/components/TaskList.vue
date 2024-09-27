@@ -1,6 +1,7 @@
 <template>
   <div class="task-list">
     <h2>Task List</h2>
+    <TaskForm />
     <EmptyState v-if="sortedTasks.length === 0">
       No tasks available. Add a new task to get started!
     </EmptyState>
@@ -11,53 +12,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted } from "vue";
+import { defineComponent, computed } from "vue";
 import { useTaskStore } from "../stores/taskStore";
 import TaskItem from "./TaskItem.vue";
 import EmptyState from "./general/EmptyState.vue";
-import { Task, TaskStatus } from "../types/task";
+import TaskForm from "./TaskForm.vue";
+import { Task } from "../types/task";
 
 export default defineComponent({
   name: "TaskList",
   components: {
     TaskItem,
     EmptyState,
+    TaskForm,
   },
   setup() {
     const taskStore = useTaskStore();
-
-    onMounted(() => {
-      if (taskStore.tasks.length === 0) {
-        taskStore.addTask({
-          id: 1,
-          title: "Task 1 title",
-          description: "Task 1 Description: Lorem ipsum dolor amet",
-          dueDate: "2024-10-05",
-          status: TaskStatus.Completed,
-        });
-        taskStore.addTask({
-          id: 2,
-          title: "Task 2 title",
-          description: "Task 2 Description: Lorem ipsum dolor amet",
-          dueDate: "2024-10-05",
-          status: TaskStatus.InProgress,
-        });
-        taskStore.addTask({
-          id: 3,
-          title: "Task 3 title",
-          description: "Task 3 Description: Lorem ipsum dolor amet",
-          dueDate: "2024-10-05",
-          status: TaskStatus.Pending,
-        });
-        taskStore.addTask({
-          id: 3,
-          title: "Task 4 title",
-          description: "Task 4 Description: Lorem ipsum dolor amet",
-          dueDate: "2024-10-05",
-          status: TaskStatus.Overdue,
-        });
-      }
-    });
 
     const sortedTasks = computed(() => {
       return taskStore.tasks.slice().sort((a: Task, b: Task) => {
