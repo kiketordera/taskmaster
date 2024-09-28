@@ -88,7 +88,7 @@ import { TaskStatus, NewTask } from "../types/task";
 
 export default defineComponent({
   name: "TaskForm",
-  setup() {
+  setup(props, { emit }) {
     const taskStore = useTaskStore();
 
     const title = ref("");
@@ -145,13 +145,14 @@ export default defineComponent({
         };
         taskStore.addTask(newTask);
 
-        // Reset form fields
         title.value = "";
         description.value = "";
         dueDate.value = "";
         status.value = "";
 
         successMessage.value = "Task added successfully!";
+
+        emit("close");
       } catch (error) {
         console.error("Failed to add task:", error);
       } finally {
@@ -244,7 +245,7 @@ export default defineComponent({
     }
 
     &:hover:enabled {
-      background-color: darken($blue, 10%);
+      background-color: $blue-darker;
     }
   }
 }

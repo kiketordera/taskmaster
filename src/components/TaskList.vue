@@ -1,7 +1,12 @@
 <template>
   <div class="task-list">
     <h2>Task List</h2>
-    <TaskForm />
+    <button @click="openForm" class="add-task-button">Add Task</button>
+
+    <Modal v-if="isFormVisible" @close="closeForm">
+      <TaskForm @close="closeForm" />
+    </Modal>
+
     <EmptyState v-if="sortedTasks.length === 0">
       No tasks available. Add a new task to get started!
     </EmptyState>
@@ -12,31 +17,45 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
-import { useTaskStore } from "../stores/taskStore";
-import TaskItem from "./TaskItem.vue";
-import EmptyState from "./general/EmptyState.vue";
-import TaskForm from "./TaskForm.vue";
-import { Task } from "../types/task";
+import { defineComponent, ref, computed } from 'vue';
+import { useTaskStore } from '../stores/taskStore';
+import TaskForm from './TaskForm.vue';
+import TaskItem from './TaskItem.vue';
+import EmptyState from './general/EmptyState.vue';
+import Modal from './Modal.vue';
 
 export default defineComponent({
-  name: "TaskList",
+  name: 'TaskList',
   components: {
+    TaskForm,
     TaskItem,
     EmptyState,
-    TaskForm,
+    Modal,
   },
   setup() {
     const taskStore = useTaskStore();
 
     const sortedTasks = computed(() => {
-      return taskStore.tasks.slice().sort((a: Task, b: Task) => {
+      return taskStore.tasks.slice().sort((a, b) => {
         return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
       });
     });
 
+    const isFormVisible = ref(false);
+
+    const openForm = () => {
+      isFormVisible.value = true;
+    };
+
+    const closeForm = () => {
+      isFormVisible.value = false;
+    };
+
     return {
       sortedTasks,
+      isFormVisible,
+      openForm,
+      closeForm,
     };
   },
 });

@@ -5,5 +5,3 @@ import TaskList from "./components/TaskList.vue";
 <template>
   <TaskList />
 </template>
-
-<style scoped></style>
