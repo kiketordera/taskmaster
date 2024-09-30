@@ -6,6 +6,8 @@
     <p :class="['status', task.status.toLowerCase()]">
       Status: {{ task.status }}
     </p>
+    <button @click="onEdit" class="edit-button">Edit</button>
+    <button @click="onDelete" class="delete-button">Delete</button>
   </li>
 </template>
 
@@ -22,11 +24,22 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(_) {
+  emits: ["edit", "delete"],
+  setup(props, { emit }) {
     const { formattedDate } = useDateFormatter();
+
+    const onEdit = () => {
+      emit("edit", props.task);
+    };
+
+    const onDelete = () => {
+      emit("delete", props.task.id);
+    };
 
     return {
       formattedDate,
+      onEdit,
+      onDelete,
     };
   },
 });

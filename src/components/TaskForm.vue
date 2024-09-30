@@ -72,7 +72,15 @@
     </div>
 
     <button type="submit" :disabled="isSubmitting">
-      {{ isSubmitting ? "Adding..." : "Add Task" }}
+      {{
+        isSubmitting
+          ? isEditMode
+            ? "Updating..."
+            : "Adding..."
+          : isEditMode
+          ? "Update Task"
+          : "Add Task"
+      }}
     </button>
 
     <div v-if="successMessage" class="success-message">
@@ -82,14 +90,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive } from "vue";
+import { defineComponent, ref, reactive, watch } from "vue";
 import { useTaskStore } from "../stores/taskStore";
-import { TaskStatus, NewTask } from "../types/task";
+import { TaskStatus, NewTask, Task } from "../types/task";
 
 export default defineComponent({
   name: "TaskForm",
+  props: {
+    task: {
+      type: Object as () => Task | null,
+      default: null,
+    },
+  },
+  emits: ["close"],
   setup(props, { emit }) {
     const taskStore = useTaskStore();
+
+    const isEditMode = ref(false);
 
     const title = ref("");
     const description = ref("");
@@ -106,6 +123,26 @@ export default defineComponent({
     const isSubmitting = ref(false);
     const successMessage = ref("");
     const statusOptions = Object.values(TaskStatus);
+
+    watch(
+      () => props.task,
+      (newTask) => {
+        if (newTask) {
+          isEditMode.value = true;
+          title.value = newTask.title;
+          description.value = newTask.description;
+          dueDate.value = newTask.dueDate;
+          status.value = newTask.status;
+        } else {
+          isEditMode.value = false;
+          title.value = "";
+          description.value = "";
+          dueDate.value = "";
+          status.value = "";
+        }
+      },
+      { immediate: true }
+    );
 
     const validateForm = (): boolean => {
       errors.title = title.value.trim() ? undefined : "Title is required.";
@@ -137,24 +174,41 @@ export default defineComponent({
       successMessage.value = "";
 
       try {
-        const newTask: NewTask = {
-          title: title.value.trim(),
-          description: description.value.trim(),
-          dueDate: dueDate.value,
-          status: status.value as TaskStatus,
-        };
-        taskStore.addTask(newTask);
+        if (isEditMode.value && props.task) {
+          const updatedTask: Task = {
+            id: props.task.id,
+            title: title.value.trim(),
+            description: description.value.trim(),
+            dueDate: dueDate.value,
+            status: status.value as TaskStatus,
+          };
+          taskStore.editTask(updatedTask);
+          successMessage.value = "Task updated successfully!";
+        } else {
+          const newTask: NewTask = {
+            title: title.value.trim(),
+            description: description.value.trim(),
+            dueDate: dueDate.value,
+            status: status.value as TaskStatus,
+          };
+          taskStore.addTask(newTask);
+          successMessage.value = "Task added successfully!";
+        }
 
-        title.value = "";
-        description.value = "";
-        dueDate.value = "";
-        status.value = "";
-
-        successMessage.value = "Task added successfully!";
+        // Reset form fields if adding a new task
+        if (!isEditMode.value) {
+          title.value = "";
+          description.value = "";
+          dueDate.value = "";
+          status.value = "";
+        }
 
         emit("close");
       } catch (error) {
-        console.error("Failed to add task:", error);
+        console.error(
+          `Failed to ${isEditMode.value ? "update" : "add"} task:`,
+          error
+        );
       } finally {
         isSubmitting.value = false;
       }
@@ -170,6 +224,7 @@ export default defineComponent({
       errors,
       isSubmitting,
       successMessage,
+      isEditMode,
     };
   },
 });

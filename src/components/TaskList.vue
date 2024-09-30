@@ -4,28 +4,35 @@
     <button @click="openForm" class="add-task-button">Add Task</button>
 
     <Modal v-if="isFormVisible" @close="closeForm">
-      <TaskForm @close="closeForm" />
+      <TaskForm :task="selectedTask" @close="closeForm" />
     </Modal>
 
     <EmptyState v-if="sortedTasks.length === 0">
       No tasks available. Add a new task to get started!
     </EmptyState>
     <ul v-else>
-      <TaskItem v-for="task in sortedTasks" :key="task.id" :task="task" />
+      <TaskItem
+        v-for="task in sortedTasks"
+        :key="task.id"
+        :task="task"
+        @edit="handleEdit"
+        @delete="handleDelete"
+      />
     </ul>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
-import { useTaskStore } from '../stores/taskStore';
-import TaskForm from './TaskForm.vue';
-import TaskItem from './TaskItem.vue';
-import EmptyState from './general/EmptyState.vue';
-import Modal from './Modal.vue';
+import { defineComponent, ref, computed } from "vue";
+import { useTaskStore } from "../stores/taskStore";
+import TaskForm from "./TaskForm.vue";
+import TaskItem from "./TaskItem.vue";
+import EmptyState from "./general/EmptyState.vue";
+import Modal from "./Modal.vue";
+import { Task } from "../types/task";
 
 export default defineComponent({
-  name: 'TaskList',
+  name: "TaskList",
   components: {
     TaskForm,
     TaskItem,
@@ -42,13 +49,25 @@ export default defineComponent({
     });
 
     const isFormVisible = ref(false);
+    const selectedTask = ref<Task | null>(null);
 
     const openForm = () => {
+      selectedTask.value = null;
       isFormVisible.value = true;
     };
 
     const closeForm = () => {
       isFormVisible.value = false;
+      selectedTask.value = null;
+    };
+
+    const handleEdit = (task: Task) => {
+      selectedTask.value = task;
+      isFormVisible.value = true;
+    };
+
+    const handleDelete = (taskId: string) => {
+      taskStore.deleteTask(taskId);
     };
 
     return {
@@ -56,6 +75,9 @@ export default defineComponent({
       isFormVisible,
       openForm,
       closeForm,
+      selectedTask,
+      handleEdit,
+      handleDelete,
     };
   },
 });
