@@ -33,7 +33,12 @@ export default defineComponent({
     };
 
     const onDelete = () => {
-      emit("delete", props.task.id);
+      const userConfirmed = window.confirm(
+        "Are you sure you want to delete this task?"
+      );
+      if (userConfirmed) {
+        emit("delete", props.task.id);
+      }
     };
 
     return {
