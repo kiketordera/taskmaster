@@ -4,6 +4,16 @@
     <button @click="openForm" class="add-task-button">Add Task</button>
 
     <div class="controls">
+      <div class="search">
+        <label for="searchQuery">Search:</label>
+        <input
+          id="searchQuery"
+          type="text"
+          v-model="searchQuery"
+          placeholder="Search by title or description..."
+        />
+      </div>
+
       <div class="filter">
         <label for="statusFilter">Filter by Status:</label>
         <select id="statusFilter" v-model="statusFilter">
@@ -41,7 +51,6 @@
         :task="task"
         @edit="handleEdit"
         @delete="handleDelete"
-        @change-status="handleChangeStatus"
       />
     </ul>
   </div>
@@ -70,10 +79,21 @@ export default defineComponent({
     const statusFilter = ref<string>("");
     const dueDateSort = ref<string>("asc");
 
+    const searchQuery = ref<string>("");
+
     const statusOptions = Object.values(TaskStatus);
 
     const filteredAndSortedTasks = computed(() => {
       let tasks = taskStore.tasks.slice();
+
+      if (searchQuery.value.trim() !== "") {
+        const query = searchQuery.value.trim().toLowerCase();
+        tasks = tasks.filter(
+          (task) =>
+            task.title.toLowerCase().includes(query) ||
+            task.description.toLowerCase().includes(query)
+        );
+      }
 
       if (statusFilter.value) {
         tasks = tasks.filter((task) => task.status === statusFilter.value);
@@ -110,11 +130,8 @@ export default defineComponent({
       taskStore.deleteTask(taskId);
     };
 
-    const handleChangeStatus = (taskId: string, newStatus: TaskStatus) => {
-      taskStore.changeTaskStatus(taskId, newStatus);
-    };
-
     return {
+      searchQuery,
       statusFilter,
       dueDateSort,
       statusOptions,
@@ -125,7 +142,6 @@ export default defineComponent({
       selectedTask,
       handleEdit,
       handleDelete,
-      handleChangeStatus,
     };
   },
 });
