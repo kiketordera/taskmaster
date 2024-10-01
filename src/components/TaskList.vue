@@ -3,20 +3,45 @@
     <h2>Task List</h2>
     <button @click="openForm" class="add-task-button">Add Task</button>
 
+    <div class="controls">
+      <div class="filter">
+        <label for="statusFilter">Filter by Status:</label>
+        <select id="statusFilter" v-model="statusFilter">
+          <option value="">All</option>
+          <option
+            v-for="statusOption in statusOptions"
+            :key="statusOption"
+            :value="statusOption"
+          >
+            {{ statusOption }}
+          </option>
+        </select>
+      </div>
+
+      <div class="sort">
+        <label for="dueDateSort">Sort by Due Date:</label>
+        <select id="dueDateSort" v-model="dueDateSort">
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+      </div>
+    </div>
+
     <Modal v-if="isFormVisible" @close="closeForm">
       <TaskForm :task="selectedTask" @close="closeForm" />
     </Modal>
 
-    <EmptyState v-if="sortedTasks.length === 0">
+    <EmptyState v-if="filteredAndSortedTasks.length === 0">
       No tasks available. Add a new task to get started!
     </EmptyState>
     <ul v-else>
       <TaskItem
-        v-for="task in sortedTasks"
+        v-for="task in filteredAndSortedTasks"
         :key="task.id"
         :task="task"
         @edit="handleEdit"
         @delete="handleDelete"
+        @change-status="handleChangeStatus"
       />
     </ul>
   </div>
@@ -29,7 +54,7 @@ import TaskForm from "./TaskForm.vue";
 import TaskItem from "./TaskItem.vue";
 import EmptyState from "./general/EmptyState.vue";
 import Modal from "./Modal.vue";
-import { Task } from "../types/task";
+import { Task, TaskStatus } from "../types/task";
 
 export default defineComponent({
   name: "TaskList",
@@ -42,10 +67,25 @@ export default defineComponent({
   setup() {
     const taskStore = useTaskStore();
 
-    const sortedTasks = computed(() => {
-      return taskStore.tasks.slice().sort((a, b) => {
-        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    const statusFilter = ref<string>("");
+    const dueDateSort = ref<string>("asc");
+
+    const statusOptions = Object.values(TaskStatus);
+
+    const filteredAndSortedTasks = computed(() => {
+      let tasks = taskStore.tasks.slice();
+
+      if (statusFilter.value) {
+        tasks = tasks.filter((task) => task.status === statusFilter.value);
+      }
+
+      tasks.sort((a, b) => {
+        const dateA = new Date(a.dueDate).getTime();
+        const dateB = new Date(b.dueDate).getTime();
+        return dueDateSort.value === "asc" ? dateA - dateB : dateB - dateA;
       });
+
+      return tasks;
     });
 
     const isFormVisible = ref(false);
@@ -70,14 +110,22 @@ export default defineComponent({
       taskStore.deleteTask(taskId);
     };
 
+    const handleChangeStatus = (taskId: string, newStatus: TaskStatus) => {
+      taskStore.changeTaskStatus(taskId, newStatus);
+    };
+
     return {
-      sortedTasks,
+      statusFilter,
+      dueDateSort,
+      statusOptions,
+      filteredAndSortedTasks,
       isFormVisible,
       openForm,
       closeForm,
       selectedTask,
       handleEdit,
       handleDelete,
+      handleChangeStatus,
     };
   },
 });
