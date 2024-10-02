@@ -76,6 +76,17 @@ export default defineComponent({
     color: $purple;
   }
 
+  button {
+    @include button;
+    margin-right: 20px;
+    &.edit-button {
+      background-color: $orange;
+    }
+    &.delete-button {
+      background-color: $brown;
+    }
+  }
+
   p.status {
     font-family: $medium;
     text-transform: capitalize;

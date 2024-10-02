@@ -1,11 +1,31 @@
 @mixin status-color($status) {
-    @if $status == 'pending' {
-      color: $orange;
-    } @else if $status == 'completed' {
-      color: $green;
-    } @else if $status == 'overdue' {
-      color: $pink;
-    } @else {
-      color: $purple;
-    }
+  @if $status == "pending" {
+    color: $orange;
+  } @else if $status == "completed" {
+    color: $green;
+  } @else if $status == "overdue" {
+    color: $pink;
+  } @else {
+    color: $purple;
   }
+}
+
+@mixin button {
+  padding: 10px 15px;
+  background-color: $blue;
+  color: $background-color;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: $medium;
+
+  &:disabled {
+    background-color: $marin-blue;
+    cursor: not-allowed;
+  }
+
+  &:hover:enabled {
+    background-color: $blue-darker;
+  }
+}

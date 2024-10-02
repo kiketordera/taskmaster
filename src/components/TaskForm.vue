@@ -253,45 +253,6 @@ export default defineComponent({
 });
 </script>
 
-<!-- <style scoped>
-.task-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.input-error {
-  border-color: #e74c3c;
-}
-
-.error-message {
-  color: #e74c3c;
-  font-size: 0.875rem;
-}
-
-.loading {
-  margin: 1rem 0;
-  font-style: italic;
-  color: #555;
-}
-
-.error {
-  margin: 1rem 0;
-  color: #e74c3c;
-  font-weight: bold;
-}
-
-.success-message {
-  margin-top: 1rem;
-  color: #2ecc71;
-}
-</style> -->
-
 <style lang="scss" scoped>
 .task-form {
   max-width: 500px;
@@ -347,23 +308,7 @@ export default defineComponent({
   }
 
   button {
-    padding: 10px 15px;
-    background-color: $blue;
-    color: $background-color;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    font-family: $medium;
-
-    &:disabled {
-      background-color: $marin-blue;
-      cursor: not-allowed;
-    }
-
-    &:hover:enabled {
-      background-color: $blue-darker;
-    }
+    @include button;
   }
 }
 </style>

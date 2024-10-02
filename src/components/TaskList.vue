@@ -1,8 +1,6 @@
 <template>
   <div class="task-list">
     <h2>Task List</h2>
-    <button @click="openForm" class="add-task-button">Add Task</button>
-
     <div class="controls">
       <div class="search">
         <label for="searchQuery">Search:</label>
@@ -37,6 +35,7 @@
       </div>
     </div>
 
+    <button @click="openForm" class="add-task-button">Add Task</button>
     <div v-if="isLoading" class="loading">Loading tasks...</div>
 
     <div v-if="error" class="error">
@@ -81,7 +80,6 @@ export default defineComponent({
   },
   setup() {
     const taskStore = useTaskStore();
-
     const searchQuery = ref<string>("");
     const statusFilter = ref<string>("");
     const dueDateSort = ref<string>("asc");
@@ -171,16 +169,27 @@ export default defineComponent({
     color: $purple;
   }
 
-  .empty-state {
-    text-align: center;
-    color: $purple;
-    font-family: $regular;
-    padding: 20px 0;
+  .controls {
+    div {
+      margin: 15px 0px;
+      label {
+        margin-right: 20px;
+      }
+      input {
+        width: 100%;
+      }
+      input,
+      select {
+        padding: 5px;
+      }
+    }
   }
-
+  button {
+    @include button;
+    float: right;
+  }
   ul {
-    list-style-type: none;
-    padding: 0;
+    margin-top: 50px;
   }
 }
 </style>
