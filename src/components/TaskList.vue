@@ -37,11 +37,17 @@
       </div>
     </div>
 
+    <div v-if="isLoading" class="loading">Loading tasks...</div>
+
+    <div v-if="error" class="error">
+      {{ error }}
+    </div>
+
     <Modal v-if="isFormVisible" @close="closeForm">
       <TaskForm :task="selectedTask" @close="closeForm" />
     </Modal>
 
-    <EmptyState v-if="filteredAndSortedTasks.length === 0">
+    <EmptyState v-if="!isLoading && filteredAndSortedTasks.length === 0">
       No tasks available. Add a new task to get started!
     </EmptyState>
     <ul v-else>
@@ -57,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 import { useTaskStore } from "../stores/taskStore";
 import TaskForm from "./TaskForm.vue";
 import TaskItem from "./TaskItem.vue";
@@ -76,10 +82,9 @@ export default defineComponent({
   setup() {
     const taskStore = useTaskStore();
 
+    const searchQuery = ref<string>("");
     const statusFilter = ref<string>("");
     const dueDateSort = ref<string>("asc");
-
-    const searchQuery = ref<string>("");
 
     const statusOptions = Object.values(TaskStatus);
 
@@ -126,9 +131,13 @@ export default defineComponent({
       isFormVisible.value = true;
     };
 
-    const handleDelete = (taskId: string) => {
-      taskStore.deleteTask(taskId);
+    const handleDelete = async (taskId: string) => {
+      await taskStore.deleteTask(taskId);
     };
+
+    onMounted(async () => {
+      await taskStore.fetchTasks();
+    });
 
     return {
       searchQuery,
@@ -142,6 +151,8 @@ export default defineComponent({
       selectedTask,
       handleEdit,
       handleDelete,
+      isLoading: taskStore.isLoading,
+      error: taskStore.error,
     };
   },
 });

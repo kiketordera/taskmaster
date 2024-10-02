@@ -47,6 +47,17 @@
         {{ errors.dueDate }}
       </span>
     </div>
+    <button type="submit" :disabled="isSubmitting">
+      {{
+        isSubmitting
+          ? isEditMode
+            ? "Updating..."
+            : "Adding..."
+          : isEditMode
+          ? "Update Task"
+          : "Add Task"
+      }}
+    </button>
 
     <div class="form-group">
       <label for="status">Status</label>
@@ -66,9 +77,12 @@
           {{ statusOption }}
         </option>
       </select>
-      <span v-if="errors.status" id="status-error" class="error-message">
-        {{ errors.status }}
-      </span>
+    </div>
+    <span v-if="errors.status" id="status-error" class="error-message">
+      {{ errors.status }}
+    </span>
+    <div v-if="isSubmitting" class="loading">
+      {{ isEditMode ? "Updating task..." : "Adding task..." }}
     </div>
 
     <button type="submit" :disabled="isSubmitting">
@@ -82,6 +96,10 @@
           : "Add Task"
       }}
     </button>
+
+    <div v-if="formError" class="error">
+      {{ formError }}
+    </div>
 
     <div v-if="successMessage" class="success-message">
       {{ successMessage }}
@@ -122,6 +140,7 @@ export default defineComponent({
 
     const isSubmitting = ref(false);
     const successMessage = ref("");
+    const formError = ref<string | null>(null);
     const statusOptions = Object.values(TaskStatus);
 
     watch(
@@ -172,6 +191,7 @@ export default defineComponent({
 
       isSubmitting.value = true;
       successMessage.value = "";
+      formError.value = null;
 
       try {
         if (isEditMode.value && props.task) {
@@ -182,7 +202,7 @@ export default defineComponent({
             dueDate: dueDate.value,
             status: status.value as TaskStatus,
           };
-          taskStore.editTask(updatedTask);
+          await taskStore.editTask(updatedTask);
           successMessage.value = "Task updated successfully!";
         } else {
           const newTask: NewTask = {
@@ -191,11 +211,10 @@ export default defineComponent({
             dueDate: dueDate.value,
             status: status.value as TaskStatus,
           };
-          taskStore.addTask(newTask);
+          await taskStore.addTask(newTask);
           successMessage.value = "Task added successfully!";
         }
 
-        // Reset form fields if adding a new task
         if (!isEditMode.value) {
           title.value = "";
           description.value = "";
@@ -204,10 +223,13 @@ export default defineComponent({
         }
 
         emit("close");
-      } catch (error) {
+      } catch (err) {
+        formError.value = isEditMode.value
+          ? "Failed to update task."
+          : "Failed to add task.";
         console.error(
           `Failed to ${isEditMode.value ? "update" : "add"} task:`,
-          error
+          err
         );
       } finally {
         isSubmitting.value = false;
@@ -224,11 +246,51 @@ export default defineComponent({
       errors,
       isSubmitting,
       successMessage,
+      formError,
       isEditMode,
     };
   },
 });
 </script>
+
+<!-- <style scoped>
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-error {
+  border-color: #e74c3c;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 0.875rem;
+}
+
+.loading {
+  margin: 1rem 0;
+  font-style: italic;
+  color: #555;
+}
+
+.error {
+  margin: 1rem 0;
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.success-message {
+  margin-top: 1rem;
+  color: #2ecc71;
+}
+</style> -->
 
 <style lang="scss" scoped>
 .task-form {
