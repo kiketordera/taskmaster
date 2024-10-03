@@ -41,6 +41,7 @@ export const WithValidationErrors = Template.bind({});
 WithValidationErrors.args = {
   task: null,
 };
+
 WithValidationErrors.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
 
@@ -59,15 +60,18 @@ export const Submitting = Template.bind({});
 Submitting.args = {
   task: null,
 };
+
 Submitting.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
 
   await userEvent.type(canvas.getByLabelText(/Title/i), "New Task");
-  await userEvent.type(
-    canvas.getByLabelText(/Description/i),
-    "Task description"
-  );
-  await userEvent.type(canvas.getByLabelText(/Due Date/i), "2024-12-31");
+  await userEvent.type(canvas.getByLabelText(/Description/i), "Task description");
+
+  // Set the value directly for the date input
+  const dueDateInput = canvas.getByLabelText(/Due Date/i) as HTMLInputElement;
+  dueDateInput.value = "2024-12-31";
+  await userEvent.click(dueDateInput); // Trigger the date input field event
+
   await userEvent.selectOptions(
     canvas.getByLabelText(/Status/i),
     TaskStatus.Pending

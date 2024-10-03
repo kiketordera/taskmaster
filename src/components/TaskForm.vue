@@ -112,6 +112,7 @@ export default defineComponent({
   emits: ["close"],
   setup(props, { emit }) {
     const taskStore = useTaskStore();
+    console.log('Task prop in setup:', props.task);
 
     const isEditMode = ref(false);
 
@@ -131,16 +132,15 @@ export default defineComponent({
     const successMessage = ref("");
     const formError = ref<string | null>(null);
     const statusOptions = Object.values(TaskStatus);
-
     watch(
       () => props.task,
       (newTask) => {
         if (newTask) {
           isEditMode.value = true;
-          title.value = newTask.title;
-          description.value = newTask.description;
-          dueDate.value = newTask.dueDate;
-          status.value = newTask.status;
+          title.value = newTask.title || "";
+          description.value = newTask.description || "";
+          dueDate.value = newTask.dueDate || "";
+          status.value = newTask.status || "";
         } else {
           isEditMode.value = false;
           title.value = "";
@@ -149,7 +149,7 @@ export default defineComponent({
           status.value = "";
         }
       },
-      { immediate: true }
+      { immediate: true, deep: true }
     );
 
     const validateForm = (): boolean => {
