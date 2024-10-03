@@ -6,6 +6,13 @@
       "description": "desc",
       "dueDate": "2024-10-19",
       "status": "overdue"
+    },
+    {
+      "id": "92b9",
+      "title": "New Task",
+      "description": "Task description",
+      "dueDate": "2024-12-31",
+      "status": "pending"
     }
   ]
 }

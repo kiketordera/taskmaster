@@ -1,14 +1,17 @@
-import type { Preview } from "@storybook/vue3";
+import { setup } from "@storybook/vue3";
+import { createPinia } from "pinia";
+import type { Decorator } from "@storybook/vue3";
+import TaskForm from "../src/components/TaskForm.vue";
 
-const preview: Preview = {
-  parameters: {
-    controls: {
-      matchers: {
-        color: /(background|color)$/i,
-        date: /Date$/i,
-      },
-    },
-  },
-};
+const pinia = createPinia();
 
-export default preview;
+setup((app) => {
+  app.use(pinia);
+});
+
+const withPinia: Decorator = (storyFn) => ({
+  components: { TaskForm: TaskForm },
+  template: "<TaskForm />",
+});
+
+export const decorators = [withPinia];

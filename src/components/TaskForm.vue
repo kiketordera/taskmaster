@@ -47,17 +47,6 @@
         {{ errors.dueDate }}
       </span>
     </div>
-    <button type="submit" :disabled="isSubmitting">
-      {{
-        isSubmitting
-          ? isEditMode
-            ? "Updating..."
-            : "Adding..."
-          : isEditMode
-          ? "Update Task"
-          : "Add Task"
-      }}
-    </button>
 
     <div class="form-group">
       <label for="status">Status</label>
