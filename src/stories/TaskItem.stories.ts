@@ -1,4 +1,4 @@
-import TaskItem from './TaskItem.vue';
+import TaskItem from '../components/TaskItem.vue';
 import { Meta, StoryFn } from '@storybook/vue3';
 import { TaskStatus } from '../types/task';
 

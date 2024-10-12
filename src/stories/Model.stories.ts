@@ -1,4 +1,4 @@
-import Modal from './Modal.vue';
+import Modal from '../components/Modal.vue';
 import { Meta, StoryFn } from '@storybook/vue3';
 
 export default {

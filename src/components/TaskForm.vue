@@ -112,8 +112,6 @@ export default defineComponent({
   emits: ["close"],
   setup(props, { emit }) {
     const taskStore = useTaskStore();
-    console.log('Task prop in setup:', props.task);
-
     const isEditMode = ref(false);
 
     const title = ref("");

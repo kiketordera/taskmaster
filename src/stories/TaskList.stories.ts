@@ -1,4 +1,4 @@
-import TaskList from './TaskList.vue';
+import TaskList from '../components/TaskList.vue';
 import { Meta, StoryFn } from '@storybook/vue3';
 
 export default {

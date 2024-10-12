@@ -1,4 +1,4 @@
-import TaskForm from "./TaskForm.vue";
+import TaskForm from "../components/TaskForm.vue";
 import { Meta, StoryFn } from "@storybook/vue3";
 import { within, userEvent } from "@storybook/test";
 import { expect } from "@storybook/jest";
